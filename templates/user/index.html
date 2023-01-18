@@ -1,0 +1,256 @@
+{% extends 'user/main.html' %} {% load static %}{% load humanize %}{% block content %}
+<div class="main-panel">
+  <div class="content-wrapper">
+    <!--div class="row ">
+              <div class="col-12">
+                <div class="page-header" style="border: none; padding-bottom: 0px; margin-bottom: 10px;">
+                    <h5 class="page-title"><i class="fas fa-home"></i> Dashboard </h5>
+                </div>
+              </div>
+    
+            </div-->
+    <div class="row">
+      <div class="col-md-7  stretch-card">
+        <div class="card">
+          <div class="card-header header-sm d-flex justify-content-between align-items-center">
+            <h4 class="card-title">Account Summary</h4>
+            <a class="btn btn-inverse-primary btn-sm" href=""><i class="fa fa-file-text"></i>
+              History</a>
+          </div>
+          <div class="card-body d-flex flex-column">
+            <div class="d-flex align-items-center justify-content-between">
+              <div class=" align-items-center">
+                <p style="margin-bottom: 0.5rem;" class="text-muted">Available Balance</p>
+                <h1 class="font-weight-medium mb-0">${{ profile.available_balance|intcomma }}</h1>
+              </div>
+            </div>
+            <div class="d-flex flex-row mt-4 mb-4">
+              <div class="wrapper">
+                <p class="mb-0 text-muted">Book Balance</p>
+                <div class="d-flex align-items-center">
+                  {% if book_balance == 0.0 %}
+                  <h5 class="font-weight-medium mb-0">$ {{ profile.book_balance|intcomma }}</h5>
+                  {% else %}
+                  <h5 class="font-weight-medium mb-0">$ {{ book_balance|intcomma }}</h5>
+                  {% endif %}
+                  
+
+                </div>
+              </div>
+              <div class="wrapper ml-4 border-left pl-4">
+                <p class="mb-0 text-muted">Live Profit</p>
+                <div class="d-flex align-items-center">
+                  <h5 class="font-weight-medium mb-0">$ {{ live_profit|intcomma }}</h5>
+                  <!--div class="badge badge-success ml-2 badge-sm">NAN%</div-->
+                </div>
+              </div>
+            </div>
+
+            <div class="d-flex flex-row mb-3">
+
+              <a href="/user/deposit" class="btn btn-outline-success mr-1"><i class="fa fa-upload"></i> Deposit</a>
+              <a href="/user/withdraw" class="btn btn-outline-warning mr-1"><i class="fa fa-download"></i> Withdraw</a>
+              <a href="/user/transfer" class="btn btn-outline-primary d-none d-md-block"><i class="fa fa-exchange"></i>
+                Transfer</a>
+            </div>
+            <div class="d-flex flex-row">
+              <p><small class="text-muted mt-5">Your Available balance is the real balance you can withdraw from while
+                  your book balance is your potential balance that will become available when your deposit plan is
+                  completed.</small></p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-5 stretch-card">
+        <div class="card text-center">
+          <div class="card-body d-flex flex-column px-2">
+            <div class="wrapper">
+              <h5>Invite Your Friends</h5>
+              <p><small class="text-muted ">Earn more when you refer your friends to invest with us. The reward on our
+                  referral program is dependent on the deposit plans.</small></p>
+              <!--form class="forms-sample mt-3" action="ref.html" method="post">
+                          <div class="form-group">
+                            <input type="email" class="form-control" name='email' placeholder="Your Friend's Email Address"> </div>
+                            <button type="submit" name='invite_email' class="btn btn-warning btn-block"><i class='fa fa-envelope'></i> Invite Via Email</button>
+                        </form-->
+
+              <div class="row">
+                <div class="col-6 col-md-12">
+                  <form class="forms-sample mt-2" action='ref.html' method="post">
+                    <a href="https://instagram.com?text={{ request.build_absolute_uri }}?referred_by={{ request.user.username }}"
+                      target="_blank" class="btn btn-warning btn-block"><i class="fa fa-instagram"></i>Instagram</a>
+
+                  </form>
+                </div>
+                <div class="col-6 col-md-12">
+                  <form class="forms-sample mt-2" action='ref.html' method="post">
+                    <a href="https://m.facebook.com/?soft=search" target="_blank" class="btn btn-primary btn-block"><i
+                        class="fa fa-facebook"></i>Facebook</a>
+
+                  </form>
+                </div>
+
+                <div class="col-6 col-md-12">
+                  <form class="forms-sample mt-2" action='ref.html' method="post">
+                    <a href="https://wa.me?text={{ request.build_absolute_uri }}?referred_by={{ request.user.username }}"
+                      target="_blank" class="btn btn-success btn-block"><i class="fa fa-whatsapp"></i>Whatsapp</a>
+
+                  </form>
+                </div>
+
+                <div class="col-6 col-md-12">
+                  <form class="forms-sample mt-2" action='ref.html' method="post">
+                    <a href="https://twitter.com/intent/tweet?url={{ request.build_absolute_uri }}?referred_by={{ request.user.username }}&text=JoinUs"
+                      target="_blank" class="btn btn-outline-primary btn-block"><i class="fa fa-twitter"></i>Twitter</a>
+
+                  </form>
+                </div>
+              </div>
+
+              <form class="forms-sample mt-3">
+                <div class="form-group">
+                  <input type="text" readonly id='ref_cop' class="form-control text-dark"
+                    value="{{ request.build_absolute_uri }}referral?referred_by={{ request.user.username }}">
+                </div>
+                <button id='ref_btn' type="button" onclick="copy_ref('ref_cop','#ref_btn');"
+                  class="btn btn-primary btn-block"><i class='fa fa-copy'></i> Copy Referral Link</button>
+              </form>
+
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <div class="card card-statistics mt-1">
+      <div class="row">
+        <div class="card-col col-xl-3 col-lg-3 col-md-3 col-6">
+          <div class="card-body px-2">
+            <div class="d-flex align-items-center justify-content-center flex-column flex-sm-row">
+              <img class="xcoin" src="{% static 'user/images/s-btc.png' %}" />
+              <div class="wrapper text-center text-sm-left">
+                <div class="fluid-container">
+                  <h3 class="mb-0 font-weight-medium"></h3>
+                  <p class="mt-minus-5 fs-1 text-"></p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="card-col col-xl-3 col-lg-3 col-md-3 col-6">
+          <div class="card-body">
+            <div class="d-flex align-items-center justify-content-center flex-column flex-sm-row">
+              <img class="xcoin" src="{% static 'user/images/s-eth.png' %}" />
+              <div class="wrapper text-center text-sm-left">
+                <div class="fluid-container">
+                  <h3 class="mb-0 font-weight-medium"></h3>
+                  <p class="mt-minus-5 fs-1 text-"></p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="card-col col-xl-3 col-lg-3 col-md-3 col-6">
+          <div class="card-body">
+            <div class="d-flex align-items-center justify-content-center flex-column flex-sm-row">
+              <img class="xcoin" src="{% static 'user/images/s-ltc.png' %}" />
+              <div class="wrapper text-center text-sm-left">
+                <div class="fluid-container">
+                  <h3 class="mb-0 font-weight-medium"></h3>
+                  <p class="mt-minus-5 fs-1 text-"></p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="card-col col-xl-3 col-lg-3 col-md-3 col-6">
+          <div class="card-body">
+            <div class="d-flex align-items-center justify-content-center flex-column flex-sm-row">
+              <img class="xcoin" src="{% static 'user/images/s-xrp.png' %} " />
+              <div class="wrapper text-center text-sm-left">
+                <div class="fluid-container">
+                  <h3 class="mb-0 font-weight-medium"></h3>
+                  <p class="mt-minus-5 fs-1 text-"></p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row mt-1">
+
+
+      <div class="col-md-6  stretch-card">
+        <div class="card">
+          <div class="card-body px-0">
+            <h4 class="card-title">Recent Transaction</h4>
+            <div class="">
+              <table class="table  table-striped">
+                <tbody>
+                  {% for transaction in transactions %}
+                  <div class="card">
+                    <div class="card-body">
+
+                      <h5 class="card-title">{{ transaction.action_title }}</h5>
+
+
+
+                      <p class="card-text">{{ transaction.action }}</p>
+                      <p class="text-muted">{{ transaction.time }}</p>
+
+                    </div>
+                  </div>
+                  {% empty %}
+                  <p class="text-center">You have not made any transaction</p>
+                  {% endfor %}
+
+                </tbody>
+              </table>
+            </div>
+            <a class=" btn btn-outline-success mt-3 px-3" href="/user/transaction">Show all transactions</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-6  stretch-card">
+        <div class="card">
+          <div class="card-body px-2">
+            <h4 class="card-title">Market</h4>
+            <div class="tradingview-widget-container">
+              <div class="tradingview-widget-container__widget"></div>
+              <div class="tradingview-widget-copyright"><a
+                  href="https://www.tradingview.com/markets/cryptocurrencies/prices-all/" rel="noopener"
+                  target="_blank"><span class="blue-text">Cryptocurrency Markets</span></a> by TradingView</div>
+              <script type="text/javascript"
+                src="https://s3.tradingview.com/external-embedding/embed-widget-screener.js" async>
+                  {
+                    "width": "100%",
+                      "height": "550",
+                        "defaultColumn": "overview",
+                          "screener_type": "crypto_mkt",
+                            "displayCurrency": "USD",
+                              "colorTheme": "dark",
+                                "locale": "en",
+                                  "isTransparent": true
+                  }
+                </script>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+
+    </div>
+
+
+  </div>
+
+
+
+{% endblock content %}

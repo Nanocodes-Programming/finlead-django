@@ -1,0 +1,20 @@
+{% extends 'account/main.html' %}
+{% load static %}
+{% load i18n %}
+{% load account socialaccount %}
+{% block head_title %}{% trans "Face Recognition Login" %}{% endblock %}
+
+{% block head %}<h2>{% trans "Face Recognition" %}</h2>{% endblock head %}
+{% block content %}
+<div style="text-align:center;">
+    <img src="{% static 'images/face-recog.jpeg' %}" alt="Face Recognition Picture">
+</div>
+
+<form class="login" method="POST" action="">
+  {% csrf_token %}
+  {{ form.as_p }}
+  <button type="submit" class="btn btn-primary"> Login</button>
+</form>
+
+{% endblock %}
+
